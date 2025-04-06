@@ -1,0 +1,41 @@
+name: Build BAT to EXE
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'SEE/*.bat'
+      - 'Local/*.bat'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Download Bat To Exe Converter
+      run: |
+        Invoke-WebRequest -Uri "https://github.com/mbat-to-exe-converter/releases/download/v3.1.3/BatToExeConverter.exe" -OutFile "BatToExeConverter.exe"
+    
+    - name: Convert SEE\start.bat to EXE with Banner.png
+      run: |
+        .\BatToExeConverter.exe /bat SEE\start.bat /exe SEE\start.exe /icon Local\Banner.png /invisible
+    
+    - name: Convert Local\restore.bat to EXE with Origin.png
+      run: |
+        .\BatToExeConverter.exe /bat Local\restore.bat /exe Local\restore.exe /icon Local\Origin.png /invisible
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: exe-files
+        path: |
+          SEE\start.exe
+          Local\restore.exe
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          SEE\start.exe
+          Local\restore.exe
