@@ -6,6 +6,7 @@ on:
     paths:
       - 'SEE/*.bat'
       - 'Local/*.bat'
+  workflow_dispatch:
 
 jobs:
   build:
